@@ -1,5 +1,23 @@
 # hmpps-template-kotlin
 
+## Integration Hub request API
+
+`POST /v1/benefit-checks/assessments` accepts a benefit-assessment request and
+forwards it to the Integration Hub API Platform. The caller must have the
+`ROLE_INTEGRATION_HUB__REQUEST_API` HMPPS Auth role. The response and platform
+correlation ID are returned unchanged.
+
+Configure the outbound Integration Hub credential through the following
+environment variables. Store the username and password in the deployment
+secret; do not place them in Helm values or source control.
+
+| Variable | Description |
+| --- | --- |
+| `INTEGRATION_HUB_API_BASE_URL` | Integration Hub API Platform base URL |
+| `INTEGRATION_HUB_API_USERNAME` | Platform Basic-auth client username |
+| `INTEGRATION_HUB_API_PASSWORD` | Platform Basic-auth client password |
+| `INTEGRATION_HUB_API_TIMEOUT` | Optional outbound request timeout, default `5s` |
+
 [![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/hmpps-template-kotlin/badge?style=flat)](https://github-community.service.justice.gov.uk/repository-standards/hmpps-template-kotlin)
 [![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-template-kotlin)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://template-kotlin-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)

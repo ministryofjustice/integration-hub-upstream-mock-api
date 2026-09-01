@@ -63,3 +63,9 @@ springdoc:
     enabled: false
   swagger-ui:
     enabled: false
+
+integration-hub-api:
+  base-url: ${INTEGRATION_HUB_API_BASE_URL:http://localhost:8081}
+  username: ${INTEGRATION_HUB_API_USERNAME:}
+  password: ${INTEGRATION_HUB_API_PASSWORD:}
+  timeout: ${INTEGRATION_HUB_API_TIMEOUT:5s}

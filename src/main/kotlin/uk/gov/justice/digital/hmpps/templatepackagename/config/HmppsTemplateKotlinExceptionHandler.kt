@@ -2,6 +2,7 @@ package uk.gov.justice.digital.hmpps.templatepackagename.config
 
 import jakarta.validation.ValidationException
 import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus.BAD_GATEWAY
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.HttpStatus.FORBIDDEN
 import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
@@ -11,6 +12,7 @@ import org.springframework.security.access.AccessDeniedException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.resource.NoResourceFoundException
+import uk.gov.justice.digital.hmpps.templatepackagename.benefitcheck.IntegrationHubUnavailableException
 import uk.gov.justice.hmpps.kotlin.common.ErrorResponse
 
 @RestControllerAdvice
@@ -47,6 +49,17 @@ class HmppsTemplateKotlinExceptionHandler {
         developerMessage = e.message,
       ),
     ).also { log.debug("Forbidden (403) returned: {}", e.message) }
+
+  @ExceptionHandler(IntegrationHubUnavailableException::class)
+  fun handleIntegrationHubUnavailable(e: IntegrationHubUnavailableException): ResponseEntity<ErrorResponse> = ResponseEntity
+    .status(BAD_GATEWAY)
+    .body(
+      ErrorResponse(
+        status = BAD_GATEWAY,
+        userMessage = "Integration Hub is unavailable",
+        developerMessage = e.message,
+      ),
+    ).also { log.warn("Integration Hub is unavailable", e) }
 
   @ExceptionHandler(Exception::class)
   fun handleException(e: Exception): ResponseEntity<ErrorResponse> = ResponseEntity
