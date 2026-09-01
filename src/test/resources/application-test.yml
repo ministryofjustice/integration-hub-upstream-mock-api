@@ -8,6 +8,11 @@ management.endpoint:
 hmpps-auth:
   url: "http://localhost:8090/auth"
 
+integration-hub-api:
+  base-url: "http://localhost:8091"
+  username: "consumer-client"
+  password: "consumer-password"
+
 springdoc:
   api-docs:
     enabled: true
