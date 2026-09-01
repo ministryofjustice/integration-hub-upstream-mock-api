@@ -1,0 +1,43 @@
+meta {
+  name: Create benefit assessment
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{consumerApiUrl}}/v1/benefit-checks/assessments
+  body: json
+  auth: none
+}
+
+headers {
+  Authorization: Bearer {{consumerAccessToken}}
+  Content-Type: application/json
+  x-correlation-id: bruno-benefit-assessment-001
+}
+
+body:json {
+  {
+    "firstName": "Alex",
+    "lastName": "Taylor",
+    "nino": "QQ123456C",
+    "dateOfBirth": "1985-07-12",
+    "claimedBenefits": ["UNIVERSAL_CREDIT"],
+    "annualIncome": 12000,
+    "savingsAmount": 500,
+    "housingCostsPerMonth": 750,
+    "dependantChildren": 1,
+    "disabledApplicant": false,
+    "caringResponsibilities": false,
+    "postcode": "SW1A 1AA"
+  }
+}
+
+tests {
+  test("returns a completed assessment", function() {
+    expect(res.getStatus()).to.equal(201);
+    expect(res.getBody().requestId).to.exist;
+    expect(res.getBody().provider).to.equal("mock-benefit-checker");
+    expect(res.getBody().assessment.decision).to.exist;
+  });
+}
