@@ -46,14 +46,17 @@ Create a **Shell Script** Run Configuration with this script as the target:
 scripts/run-integration-hub-demo.sh
 ```
 
-Set its working directory to the project root and add these environment
-variables in the Run Configuration (do not commit their values):
+Set its working directory to the project root. Before the first run, create
+your local configuration file:
 
-```text
-INTEGRATION_HUB_API_BASE_URL=https://your-integration-hub-environment
-INTEGRATION_HUB_API_USERNAME=your-consumer-client-id
-INTEGRATION_HUB_API_PASSWORD=your-consumer-client-secret
+```bash
+cp .integration-hub-demo.env.example .integration-hub-demo.env
 ```
+
+Fill in the Integration Hub URL and consumer credential in
+`.integration-hub-demo.env`. The file is ignored by Git, so the IntelliJ Run
+Configuration needs no environment variables and the credential cannot be
+committed accidentally.
 
 [![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/hmpps-template-kotlin/badge?style=flat)](https://github-community.service.justice.gov.uk/repository-standards/hmpps-template-kotlin)
 [![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-template-kotlin)
