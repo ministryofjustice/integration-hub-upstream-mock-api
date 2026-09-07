@@ -44,15 +44,15 @@ class IntegrationHubDemoRunner(
 
     private val DEMO_REQUEST =
       BenefitAssessmentRequest(
-        firstName = "Alex",
-        lastName = "Taylor",
-        nino = "QQ123456C",
-        dateOfBirth = LocalDate.parse("1985-07-12"),
+        firstName = "Test",
+        lastName = "User",
+        nino = "AA123456A",
+        dateOfBirth = LocalDate.parse("1990-01-01"),
         claimedBenefits = listOf("UNIVERSAL_CREDIT"),
-        annualIncome = BigDecimal("12000"),
+        annualIncome = BigDecimal("25000"),
         savingsAmount = BigDecimal("500"),
-        housingCostsPerMonth = BigDecimal("750"),
-        dependantChildren = 1,
+        housingCostsPerMonth = BigDecimal("800"),
+        dependantChildren = 0,
         disabledApplicant = false,
         caringResponsibilities = false,
         postcode = "SW1A 1AA",

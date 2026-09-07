@@ -54,4 +54,5 @@ export INTEGRATION_HUB_DEMO_CORRELATION_ID="${INTEGRATION_HUB_DEMO_CORRELATION_I
 export INTEGRATION_HUB_API_TIMEOUT="${INTEGRATION_HUB_API_TIMEOUT:-30s}"
 
 cd "${project_root}"
-exec ./gradlew bootRun --args='--spring.profiles.active=dev'
+# The runner only invokes the client, so avoid binding a local HTTP port during a demo.
+exec ./gradlew bootRun --args='--spring.profiles.active=dev --spring.main.web-application-type=none'
