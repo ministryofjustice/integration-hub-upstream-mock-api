@@ -34,6 +34,7 @@ class IntegrationHubDemoRunner(
         requestId,
         response.body.get("provider")?.asString(),
       )
+      log.info("Integration Hub demo response:\n{}", response.body.toPrettyString())
     } else {
       log.error("Integration Hub demo failed: status={}, requestId={}, errorCode={}", response.status, requestId, errorCode)
     }
