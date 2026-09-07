@@ -1,11 +1,12 @@
 # hmpps-template-kotlin
 
-## Integration Hub request API
+## Integration Hub consumer client
 
-`POST /v1/benefit-checks/assessments` accepts a benefit-assessment request and
-forwards it to the Integration Hub API Platform. The caller must have the
-`ROLE_INTEGRATION_HUB__REQUEST_API` HMPPS Auth role. The response and platform
-correlation ID are returned unchanged.
+This project demonstrates a consumer application calling the Integration Hub
+Request API directly. `IntegrationHubClient` sends benefit-assessment requests
+to `POST /v1/benefit-checks/assessments`, using the consumer's own client
+credential. Integration Hub authenticates and authorises the consumer; this
+project does not expose a second request API.
 
 Configure the outbound Integration Hub credential through the following
 environment variables. Store the username and password in the deployment
