@@ -69,3 +69,7 @@ integration-hub-api:
   username: ${INTEGRATION_HUB_API_USERNAME:}
   password: ${INTEGRATION_HUB_API_PASSWORD:}
   timeout: ${INTEGRATION_HUB_API_TIMEOUT:5s}
+
+integration-hub-demo:
+  enabled: ${INTEGRATION_HUB_DEMO_ENABLED:false}
+  correlation-id: ${INTEGRATION_HUB_DEMO_CORRELATION_ID:integration-hub-demo-001}
