@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# IntelliJ Shell Script configurations can invoke this through zsh and ignore
+# the shebang, so re-exec with Bash before using Bash-specific syntax.
+if [[ -z "${BASH_VERSION:-}" ]]; then
+  exec /usr/bin/env bash "$0" "$@"
+fi
+
 set -euo pipefail
 
 project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
