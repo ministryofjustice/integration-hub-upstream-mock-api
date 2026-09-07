@@ -11,6 +11,20 @@ set -euo pipefail
 project_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 config_file="${project_root}/.integration-hub-demo.env"
 
+# Prefer Homebrew's Java 25 so the IntelliJ shell configuration needs no JVM setup.
+if command -v brew >/dev/null 2>&1; then
+  brew_java_home="$(brew --prefix openjdk@25 2>/dev/null || true)/libexec/openjdk.jdk/Contents/Home"
+  if [[ -x "${brew_java_home}/bin/java" ]]; then
+    export JAVA_HOME="${brew_java_home}"
+    export PATH="${JAVA_HOME}/bin:${PATH}"
+  fi
+fi
+
+if ! java -version 2>&1 | grep -q 'version "25\.'; then
+  echo "Java 25 is required. Install it with: brew install openjdk@25" >&2
+  exit 1
+fi
+
 if [[ ! -f "${config_file}" ]]; then
   echo "Missing ${config_file}. Copy .integration-hub-demo.env.example and add the environment values." >&2
   exit 1
