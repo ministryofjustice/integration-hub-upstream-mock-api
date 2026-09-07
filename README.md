@@ -38,6 +38,23 @@ export INTEGRATION_HUB_DEMO_ENABLED=true
 Use environment-specific credentials and a non-production environment for a
 demo. Stop the application with `Ctrl+C` after the result is logged.
 
+### Run from IntelliJ
+
+Create a **Shell Script** Run Configuration with this script as the target:
+
+```text
+scripts/run-integration-hub-demo.sh
+```
+
+Set its working directory to the project root and add these environment
+variables in the Run Configuration (do not commit their values):
+
+```text
+INTEGRATION_HUB_API_BASE_URL=https://your-integration-hub-environment
+INTEGRATION_HUB_API_USERNAME=your-consumer-client-id
+INTEGRATION_HUB_API_PASSWORD=your-consumer-client-secret
+```
+
 [![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/hmpps-template-kotlin/badge?style=flat)](https://github-community.service.justice.gov.uk/repository-standards/hmpps-template-kotlin)
 [![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-template-kotlin)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://template-kotlin-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)
