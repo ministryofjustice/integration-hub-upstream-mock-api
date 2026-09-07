@@ -50,6 +50,8 @@ done
 
 export INTEGRATION_HUB_DEMO_ENABLED=true
 export INTEGRATION_HUB_DEMO_CORRELATION_ID="${INTEGRATION_HUB_DEMO_CORRELATION_ID:-integration-hub-demo-$(date +%Y%m%d-%H%M%S)}"
+# The Integration Hub may wait for a downstream provider, so demos allow longer than the normal client default.
+export INTEGRATION_HUB_API_TIMEOUT="${INTEGRATION_HUB_API_TIMEOUT:-30s}"
 
 cd "${project_root}"
 exec ./gradlew bootRun --args='--spring.profiles.active=dev'

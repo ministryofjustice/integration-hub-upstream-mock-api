@@ -16,7 +16,14 @@ class IntegrationHubDemoRunner(
   @Value("\${integration-hub-demo.correlation-id}") private val correlationId: String,
 ) : ApplicationRunner {
   override fun run(args: ApplicationArguments) {
-    val response = integrationHubClient.createAssessment(DEMO_REQUEST, correlationId)
+    try {
+      logResponse(integrationHubClient.createAssessment(DEMO_REQUEST, correlationId))
+    } catch (error: IntegrationHubUnavailableException) {
+      log.error("Integration Hub demo timed out or could not connect: {}", error.cause?.message ?: error.message)
+    }
+  }
+
+  private fun logResponse(response: IntegrationHubResponse) {
     val requestId = response.body.get("requestId")?.asString()
     val errorCode = response.body.get("error")?.get("code")?.asString()
 

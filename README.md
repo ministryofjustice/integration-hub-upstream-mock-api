@@ -36,7 +36,9 @@ export INTEGRATION_HUB_DEMO_ENABLED=true
 ```
 
 Use environment-specific credentials and a non-production environment for a
-demo. Stop the application with `Ctrl+C` after the result is logged.
+demo. The demo runner allows up to 30 seconds for a provider response; override
+this with `INTEGRATION_HUB_API_TIMEOUT` if required. Stop the application with
+`Ctrl+C` after the result is logged.
 
 ### Run from IntelliJ
 
