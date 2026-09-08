@@ -19,6 +19,47 @@ secret; do not place them in Helm values or source control.
 | `INTEGRATION_HUB_API_PASSWORD` | Platform Basic-auth client password |
 | `INTEGRATION_HUB_API_TIMEOUT` | Optional outbound request timeout, default `5s` |
 
+### Run a live demo
+
+The demo runner is disabled by default. Set the target environment URL and the
+consumer credential, then enable it to send one sample assessment directly to
+Integration Hub. It logs only the response status, request ID, provider, and
+error code; it does not log the assessment data or credentials.
+
+```bash
+export INTEGRATION_HUB_API_BASE_URL="https://your-integration-hub-environment"
+export INTEGRATION_HUB_API_USERNAME="your-consumer-client-id"
+export INTEGRATION_HUB_API_PASSWORD="your-consumer-client-secret"
+export INTEGRATION_HUB_DEMO_ENABLED=true
+
+./gradlew bootRun --args='--spring.profiles.active=dev'
+```
+
+Use environment-specific credentials and a non-production environment for a
+demo. The demo runner allows up to 30 seconds for a provider response; override
+this with `INTEGRATION_HUB_API_TIMEOUT` if required. Stop the application with
+`Ctrl+C` after the result is logged.
+
+### Run from IntelliJ
+
+Create a **Shell Script** Run Configuration with this script as the target:
+
+```text
+scripts/run-integration-hub-demo.sh
+```
+
+Set its working directory to the project root. Before the first run, create
+your local configuration file:
+
+```bash
+cp .integration-hub-demo.env.example .integration-hub-demo.env
+```
+
+Fill in the Integration Hub URL and consumer credential in
+`.integration-hub-demo.env`. The file is ignored by Git, so the IntelliJ Run
+Configuration needs no environment variables and the credential cannot be
+committed accidentally.
+
 [![Ministry of Justice Repository Compliance Badge](https://github-community.service.justice.gov.uk/repository-standards/api/hmpps-template-kotlin/badge?style=flat)](https://github-community.service.justice.gov.uk/repository-standards/hmpps-template-kotlin)
 [![Docker Repository on ghcr](https://img.shields.io/badge/ghcr.io-repository-2496ED.svg?logo=docker)](https://ghcr.io/ministryofjustice/hmpps-template-kotlin)
 [![API docs](https://img.shields.io/badge/API_docs_-view-85EA2D.svg?logo=swagger)](https://template-kotlin-dev.hmpps.service.justice.gov.uk/swagger-ui/index.html)

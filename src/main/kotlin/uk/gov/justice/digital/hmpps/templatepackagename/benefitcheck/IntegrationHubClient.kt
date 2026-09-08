@@ -17,27 +17,29 @@ class IntegrationHubClient(
 ) {
   private val webClient = builder.baseUrl(baseUrl).build()
 
-  fun createAssessment(request: BenefitAssessmentRequest, correlationId: String?): IntegrationHubResponse = webClient.post()
-    .uri(ASSESSMENTS_PATH)
-    .contentType(MediaType.APPLICATION_JSON)
-    .headers { headers ->
-      headers.setBasicAuth(username, password)
-      correlationId?.let { headers[CORRELATION_ID_HEADER] = it }
-    }
-    .bodyValue(request)
-    .exchangeToMono { response ->
-      response.bodyToMono(JsonNode::class.java).map { body ->
-        IntegrationHubResponse(
-          status = response.statusCode().value(),
-          correlationId = response.headers().header(CORRELATION_ID_HEADER).firstOrNull(),
-          body = body,
-        )
+  fun createAssessment(request: BenefitAssessmentRequest, correlationId: String?): IntegrationHubResponse = try {
+    webClient.post()
+      .uri(ASSESSMENTS_PATH)
+      .contentType(MediaType.APPLICATION_JSON)
+      .headers { headers ->
+        headers.setBasicAuth(username, password)
+        correlationId?.let { headers[CORRELATION_ID_HEADER] = it }
       }
-    }
-    .onErrorMap { error ->
-      if (error is IntegrationHubUnavailableException) error else IntegrationHubUnavailableException(error)
-    }
-    .block(timeout) ?: throw IntegrationHubUnavailableException()
+      .bodyValue(request)
+      .exchangeToMono { response ->
+        response.bodyToMono(JsonNode::class.java).map { body ->
+          IntegrationHubResponse(
+            status = response.statusCode().value(),
+            correlationId = response.headers().header(CORRELATION_ID_HEADER).firstOrNull(),
+            body = body,
+          )
+        }
+      }
+      .block(timeout) ?: throw IntegrationHubUnavailableException()
+  } catch (error: Exception) {
+    if (error is IntegrationHubUnavailableException) throw error
+    throw IntegrationHubUnavailableException(error)
+  }
 
   private companion object {
     const val ASSESSMENTS_PATH = "/v1/benefit-checks/assessments"
