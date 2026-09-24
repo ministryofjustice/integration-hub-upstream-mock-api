@@ -8,6 +8,11 @@ to `POST /v1/benefit-checks/assessments`, using the consumer's own client
 credential. Integration Hub authenticates and authorises the consumer; this
 project does not expose a second request API.
 
+See the API Platform's
+[pilot mock API end-to-end flow](https://github.com/ministryofjustice/integration-hub-api-platform/blob/main/docs/pilot-mock-api-flow.md)
+for the complete journey from this client through Integration Hub to the
+downstream mock provider.
+
 Configure the outbound Integration Hub credential through the following
 environment variables. Store the username and password in the deployment
 secret; do not place them in Helm values or source control.
