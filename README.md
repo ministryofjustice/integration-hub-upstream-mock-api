@@ -14,14 +14,16 @@ for the complete journey from this client through Integration Hub to the
 downstream mock provider.
 
 Configure the outbound Integration Hub credential through the following
-environment variables. Store the username and password in the deployment
-secret; do not place them in Helm values or source control.
+environment variables. Store the consumer secret in the deployment secret
+integration; do not put it in Helm values or source control.
 
 | Variable | Description |
 | --- | --- |
 | `INTEGRATION_HUB_API_BASE_URL` | Integration Hub API Platform base URL |
-| `INTEGRATION_HUB_API_USERNAME` | Platform Basic-auth client username |
-| `INTEGRATION_HUB_API_PASSWORD` | Platform Basic-auth client password |
+| `INTEGRATION_HUB_ENTRA_TENANT_ID` | DEVL tenant issuing pilot tokens |
+| `INTEGRATION_HUB_ENTRA_CLIENT_ID` | Approved pilot consumer application ID |
+| `INTEGRATION_HUB_ENTRA_CLIENT_SECRET` | Development consumer secret, supplied securely |
+| `INTEGRATION_HUB_ENTRA_SCOPE` | Pilot API Application ID URI followed by `/.default` |
 | `INTEGRATION_HUB_API_TIMEOUT` | Optional outbound request timeout, default `5s` |
 
 ### Run a live demo
@@ -33,8 +35,10 @@ error code; it does not log the assessment data or credentials.
 
 ```bash
 export INTEGRATION_HUB_API_BASE_URL="https://your-integration-hub-environment"
-export INTEGRATION_HUB_API_USERNAME="your-consumer-client-id"
-export INTEGRATION_HUB_API_PASSWORD="your-consumer-client-secret"
+export INTEGRATION_HUB_ENTRA_TENANT_ID="your-devl-tenant-id"
+export INTEGRATION_HUB_ENTRA_CLIENT_ID="your-pilot-consumer-client-id"
+export INTEGRATION_HUB_ENTRA_SCOPE="api://your-devl-tenant-id/integration-hub-benefit-checker-api/.default"
+# Supply INTEGRATION_HUB_ENTRA_CLIENT_SECRET securely; do not put it in shell history.
 export INTEGRATION_HUB_DEMO_ENABLED=true
 
 ./gradlew bootRun --args='--spring.profiles.active=dev'
@@ -219,3 +223,24 @@ docker build --build-arg GIT_REF=21345 --build-arg GIT_BRANCH=bob --build-arg BU
 ```
 docker run -e HMPPS_AUTH_URL="https://sign-in-dev.hmpps.service.justice.gov.uk/auth" <sha from step 3>
 ```
+
+## Pilot Entra authentication
+
+The outbound pilot client uses Entra OAuth2 client credentials. Spring Security
+obtains the application token, caches it in memory and requests a replacement
+before expiry. Assessment requests use Bearer authentication, with no fallback
+to Basic. The secret is sent only to the fixed Microsoft HTTPS token endpoint.
+
+The consumer needs the `BenefitChecker.Assess` application role and its client ID
+in the pilot API allowlist. Credentials for an unrelated Entra application or a
+file-transfer upload token do not grant assessment access.
+
+Configure the variables above from the IDAM `pilot_api_configuration` output.
+Provision the development consumer credential separately; this PR does not create
+one. Keep the local env file private. Hosted runs need the platform's secret
+integration and agreed rotation before enabling the demo. A certificate or
+workload-identity approach can replace the development secret for production.
+
+This needs the pilot registrations and matching API/infrastructure deployment.
+Live testing remains pending. The pilot's downstream provider authentication is
+separate and unchanged.

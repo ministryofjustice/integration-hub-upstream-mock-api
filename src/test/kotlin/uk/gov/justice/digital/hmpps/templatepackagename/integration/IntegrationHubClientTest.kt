@@ -7,11 +7,13 @@ import com.github.tomakehurst.wiremock.client.WireMock.post
 import com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor
 import com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.web.reactive.function.client.WebClient
 import uk.gov.justice.digital.hmpps.templatepackagename.benefitcheck.BenefitAssessmentRequest
 import uk.gov.justice.digital.hmpps.templatepackagename.benefitcheck.IntegrationHubClient
+import uk.gov.justice.digital.hmpps.templatepackagename.benefitcheck.IntegrationHubTokenProvider
 import uk.gov.justice.digital.hmpps.templatepackagename.integration.wiremock.IntegrationHubApiMockServer
 import uk.gov.justice.digital.hmpps.templatepackagename.integration.wiremock.IntegrationHubApiMockServer.Companion.integrationHubApi
 import java.math.BigDecimal
@@ -24,8 +26,7 @@ class IntegrationHubClientTest {
     IntegrationHubClient(
       builder = WebClient.builder(),
       baseUrl = "http://localhost:8091",
-      username = "consumer-client",
-      password = "consumer-password",
+      tokenProvider = IntegrationHubTokenProvider { "pilot-access-token" },
       timeout = Duration.ofSeconds(2),
     )
 
@@ -50,7 +51,7 @@ class IntegrationHubClientTest {
     assertThat(response.body.get("assessment").get("decision").asString()).isEqualTo("ELIGIBLE")
     integrationHubApi.verify(
       postRequestedFor(urlEqualTo("/v1/benefit-checks/assessments"))
-        .withHeader("Authorization", equalTo("Basic Y29uc3VtZXItY2xpZW50OmNvbnN1bWVyLXBhc3N3b3Jk"))
+        .withHeader("Authorization", equalTo("Bearer pilot-access-token"))
         .withHeader("x-correlation-id", equalTo("consumer-request-123"))
         .withRequestBody(containing("\"nino\":\"QQ123456C\"")),
     )
@@ -72,6 +73,31 @@ class IntegrationHubClientTest {
 
     assertThat(response.status).isEqualTo(400)
     assertThat(response.body.get("error").get("code").asString()).isEqualTo("invalid_request")
+  }
+
+  @Test
+  fun `refuses to send access tokens to a non-local HTTP API`() {
+    assertThatThrownBy {
+      IntegrationHubClient(
+        builder = WebClient.builder(),
+        baseUrl = "http://pilot.example",
+        tokenProvider = IntegrationHubTokenProvider { "pilot-access-token" },
+        timeout = Duration.ofSeconds(2),
+      )
+    }.isInstanceOf(IllegalArgumentException::class.java)
+  }
+
+  @Test
+  fun `does not call the API when token acquisition fails`() {
+    val failingClient = IntegrationHubClient(
+      builder = WebClient.builder(),
+      baseUrl = "http://localhost:8091",
+      tokenProvider = IntegrationHubTokenProvider { error("token acquisition failed") },
+      timeout = Duration.ofSeconds(2),
+    )
+    assertThatThrownBy { failingClient.createAssessment(request, null) }
+      .isInstanceOf(uk.gov.justice.digital.hmpps.templatepackagename.benefitcheck.IntegrationHubUnavailableException::class.java)
+    integrationHubApi.verify(0, postRequestedFor(urlEqualTo("/v1/benefit-checks/assessments")))
   }
 
   private companion object {
