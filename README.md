@@ -244,3 +244,10 @@ workload-identity approach can replace the development secret for production.
 This needs the pilot registrations and matching API/infrastructure deployment.
 Live testing remains pending. The pilot's downstream provider authentication is
 separate and unchanged.
+
+The non-secret development IDs and scope are populated in
+`.integration-hub-demo.env.example` from
+[IDAM apply 42643076503](https://github.com/ministryofjustice/staff-identity-idam-entra-infra/actions/runs/42643076503).
+Copy it to the Git-ignored local env file, set the deployed pilot API URL and
+supply the approved development consumer secret locally. The example deliberately
+leaves that secret empty. Registration alone does not deploy the API change.
